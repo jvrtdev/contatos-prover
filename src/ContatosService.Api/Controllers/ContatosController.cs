@@ -7,7 +7,7 @@ namespace ContatosService.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public sealed class ContatosController : ControllerBacse
+public sealed class ContatosController : ControllerBase
 {
     private readonly IContatoService _contatoService;
 
