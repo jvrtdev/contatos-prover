@@ -1,5 +1,4 @@
-using ContatosService.Api.Mappers;
-using ContatosService.Api.ViewModels.Contatos;
+using ContatosService.Application.DTOs.Contatos;
 using ContatosService.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,41 +16,37 @@ public sealed class ContatosController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(ContatoViewModel), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ContatoDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ContatoViewModel>> Criar(
-        CriarContatoViewModel viewModel,
+    public async Task<ActionResult<ContatoDto>> Criar(
+        [FromBody] CriarContatoDto dto,
         CancellationToken cancellationToken)
     {
-        var contato = await _contatoService.CriarAsync(viewModel.ParaDto(), cancellationToken);
-        var response = contato.ParaViewModel();
+        var contato = await _contatoService.CriarAsync(dto, cancellationToken);
 
-        return CreatedAtAction(nameof(ObterPorId), new { id = response.Id }, response);
+        return CreatedAtAction(nameof(ObterPorId), new { id = contato.Id }, contato);
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IReadOnlyCollection<ContatoViewModel>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IReadOnlyCollection<ContatoViewModel>>> Listar(
+    [ProducesResponseType(typeof(IReadOnlyCollection<ContatoDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyCollection<ContatoDto>>> Listar(
         CancellationToken cancellationToken)
     {
         var contatos = await _contatoService.ListarAtivosAsync(cancellationToken);
-        var response = contatos
-            .Select(contato => contato.ParaViewModel())
-            .ToList();
 
-        return Ok(response);
+        return Ok(contatos);
     }
 
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(ContatoViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ContatoDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ContatoViewModel>> ObterPorId(
+    public async Task<ActionResult<ContatoDto>> ObterPorId(
         Guid id,
         CancellationToken cancellationToken)
     {
         var contato = await _contatoService.ObterAtivoPorIdAsync(id, cancellationToken);
 
-        return Ok(contato.ParaViewModel());
+        return Ok(contato);
     }
 
     [HttpPut("{id:guid}")]
@@ -60,10 +55,10 @@ public sealed class ContatosController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Atualizar(
         Guid id,
-        AtualizarContatoViewModel viewModel,
+        [FromBody] AtualizarContatoDto dto,
         CancellationToken cancellationToken)
     {
-        await _contatoService.AtualizarAsync(id, viewModel.ParaDto(), cancellationToken);
+        await _contatoService.AtualizarAsync(id, dto, cancellationToken);
 
         return NoContent();
     }

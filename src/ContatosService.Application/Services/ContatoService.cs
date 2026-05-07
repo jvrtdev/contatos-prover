@@ -15,7 +15,7 @@ public sealed class ContatoService : IContatoService
     public ContatoService(IContatoRepository contatoRepository, IDateTimeProvider dateTimeProvider)
     {
         _contatoRepository = contatoRepository;
-        _dateTimeProvider = dateTimeProvider;
+        _dateTimeProvider = dateTimeProvider;   
     }
 
     public async Task<ContatoDto> CriarAsync(CriarContatoDto dto, CancellationToken cancellationToken = default)

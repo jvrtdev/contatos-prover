@@ -24,6 +24,7 @@ public sealed class ContatoRepository : RepositoryBase<Contato>, IContatoReposit
     public async Task<IReadOnlyCollection<Contato>> ListarAtivosAsync(CancellationToken cancellationToken = default)
     {
         return await DbSet
+            .AsNoTracking()
             .Where(contato => contato.Status == StatusContato.Ativo)
             .OrderBy(contato => contato.Nome)
             .ToListAsync(cancellationToken);
